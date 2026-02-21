@@ -2,12 +2,15 @@ name: Hello World CI/CD
 
 # Trigger workflow on every push to the main branch
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
+  
 
 jobs:
-  hello:
+  print-job:
+    name: print-a-msg-job
     runs-on: ubuntu-latest   # GitHub-hosted runner
     steps:
       - name: Checkout code
@@ -15,3 +18,17 @@ jobs:
 
       - name: Print Hello World
         run: echo "Hello World from GitHub Actions!"
+  
+  trivy-scan-job:
+    name: trivy-scan-job
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run Trivy vulnerability scanner in fs mode
+      uses: aquasecurity/trivy-action@0.33.1
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        trivy-config: trivy.yaml
